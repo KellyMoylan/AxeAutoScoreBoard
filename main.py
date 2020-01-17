@@ -36,7 +36,8 @@ class MainApplication:
         self.browser_type.set(0)
         self.headless = tk.IntVar()
         self.headless.set(0)
-
+        self.first_instance = True
+        self.former_strings = ["","","",""]
         self.stop_program = 0
 
         master.configure(background=bgcolour)
@@ -113,12 +114,20 @@ class MainApplication:
         print(self.browser_type.get())
         if self.url != "":
             if self.browser_type.get() == 0:
+                ch_options = chrome_options()
                 if self.headless.get() == 1:
-                    ch_options = chrome_options()
                     ch_options.add_argument("--headless")
-                    self.driver = webdriver.Chrome(options=ch_options)
-                else:
-                    self.driver = webdriver.Chrome()
+                try:
+                    self.driver = webdriver.Chrome("chrome78/chromedriver.exe", options=ch_options)
+                except:
+                    try:
+                        self.driver = webdriver.Chrome("chrome79/chromedriver.exe", options=ch_options)
+                    except:
+                        try:
+                            self.driver = webdriver.Chrome("chrome80/chromedriver.exe", options=ch_options)
+                        except:
+                            print("NO WORKING CHROME DRIVER")
+                            exit()
             else:
                 if self.headless.get() == 1:
                     ff_options = firefox_options()
@@ -238,8 +247,15 @@ class MainApplication:
         for x in range(0, len(player_info)):
             if "In Progress" in player_info[x].text:
                 inprogress.append(x)
-        for i in inprogress:
+        if self.first_instance:
+            for i in inprogress:
+                self.former_strings[i] = player_info[i]
+            self.first_instance = False
 
+
+        for i in inprogress:
+            if player_info[i] == self.former_strings[i]:
+                continue
             side = player_info[i].find_all('div', class_="sc-dKEPtC gLlkqy")[0].text
 
             # Get player names
@@ -300,7 +316,10 @@ class MainApplication:
                 file.write(scores[x+1])
                 file.close()
                 round += 1
-        self.master.after(2500, lambda: self.do_everything())
+
+        for i in inprogress:
+            self.former_strings[i] = player_info[i]
+        self.master.after(500, lambda: self.do_everything())
 
 root = tk.Tk()
 root.title('Axe Throwing Stream Auto Scoreboard')
