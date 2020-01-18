@@ -52,33 +52,19 @@ class MainApplication:
         self.league_entry.grid(row=2, column=2, sticky=tk.E, padx=(100, 0))
 
         tk.Radiobutton(master,
-                       text="League",
-                       indicatoron=0,
-                       width=20,
-                       padx=20,
-                       variable=self.game_type,
-                       value=0).grid(row=4, column=1, columnspan=1, pady=5)
-        tk.Radiobutton(master,
-                       text="Playoffs",
-                       indicatoron=0,
-                       width=20,
-                       padx=20,
-                       variable=self.game_type,
-                       value=1).grid(row=5, column=1, columnspan=1, pady=5)
-        tk.Radiobutton(master,
                        text="Chrome",
                        indicatoron=0,
                        width=20,
                        padx=20,
                        variable=self.browser_type,
-                       value=0).grid(row=4, column=2, columnspan=1, pady=5)
+                       value=0).grid(row=4, column=1, columnspan=1, pady=5)
         tk.Radiobutton(master,
                        text="Firefox",
                        indicatoron=0,
                        width=20,
                        padx=20,
                        variable=self.browser_type,
-                       value=1).grid(row=5, column=2, columnspan=1, pady=5)
+                       value=1).grid(row=5, column=1, columnspan=1, pady=5)
         tk.Radiobutton(master,
                        text="Not Headless",
                        indicatoron=0,
@@ -109,9 +95,8 @@ class MainApplication:
         if re.match(pattern, self.league_entry.get()):
             self.url = self.league_entry.get()
 
-    def check_for_url(self, count=0):
-        print(self.url)
-        print(self.browser_type.get())
+    def check_for_url(self):
+
         if self.url != "":
             if self.browser_type.get() == 0:
                 ch_options = chrome_options()
@@ -129,17 +114,26 @@ class MainApplication:
                             print("NO WORKING CHROME DRIVER")
                             exit()
             else:
+                ff_options = firefox_options()
                 if self.headless.get() == 1:
-                    ff_options = firefox_options()
                     ff_options.add_argument("--headless")
-                    self.driver = webdriver.Firefox(options=ff_options)
-                else:
-                    self.driver = webdriver.Firefox()
+                try:
+                    self.driver = webdriver.Firefox("firefox24/geckodriver.exe", options=ff_options)
+                except:
+                    try:
+                        self.driver = webdriver.Firefox("firefox25/geckodriver.exe", options=ff_options)
+                    except:
+                        try:
+                            self.driver = webdriver.Firefox("firefox26/geckodriver.exe", options=ff_options)
+                        except:
+                            print("NO WORKING FIREFOX DRIVER")
+                            exit()
             self.driver.get(self.url)
             self.main_loop()
 
     def main_loop(self):
-        self.master.after(5000, lambda: self.do_everything())
+        self.initiate_score_folder()
+        self.master.after(3000, lambda: self.do_everything())
 
     def set_end(self):
         self.stop_program = 1
@@ -162,34 +156,20 @@ class MainApplication:
         file.write("RT2N")
         file.close()
 
-        if self.game_type.get() == 0:
-            for x in range(1,5):
-                file = open(self.score_folder + "/Right_thrower_1_round_{0}.txt".format(x), "w")
-                file.write("RT1R{0}".format(x))
-                file.close()
-                file = open(self.score_folder + "/Right_thrower_2_round_{0}.txt".format(x), "w")
-                file.write("RT2R{0}".format(x))
-                file.close()
-                file = open(self.score_folder + "/Left_thrower_1_round_{0}.txt".format(x), "w")
-                file.write("LT1R{0}".format(x))
-                file.close()
-                file = open(self.score_folder + "/Left_thrower_2_round_{0}.txt".format(x), "w")
-                file.write("LT2R{0}".format(x))
-                file.close()
-        else:
-            for x in range(1,8):
-                file = open(self.score_folder + "/Right_thrower_1_round_{0}.txt".format(x), "w")
-                file.write("RT1R{0}".format(x))
-                file.close()
-                file = open(self.score_folder + "/Right_thrower_2_round_{0}.txt".format(x), "w")
-                file.write("RT2R{0}".format(x))
-                file.close()
-                file = open(self.score_folder + "/Left_thrower_1_round_{0}.txt".format(x), "w")
-                file.write("LT1R{0}".format(x))
-                file.close()
-                file = open(self.score_folder + "/Left_thrower_2_round_{0}.txt".format(x), "w")
-                file.write("LT2R{0}".format(x))
-                file.close()
+        for x in range(1, 8):
+            file = open(self.score_folder + "/Right_thrower_1_round_{0}.txt".format(x), "w")
+            file.write("RT1R{0}".format(x))
+            file.close()
+            file = open(self.score_folder + "/Right_thrower_2_round_{0}.txt".format(x), "w")
+            file.write("RT2R{0}".format(x))
+            file.close()
+            file = open(self.score_folder + "/Left_thrower_1_round_{0}.txt".format(x), "w")
+            file.write("LT1R{0}".format(x))
+            file.close()
+            file = open(self.score_folder + "/Left_thrower_2_round_{0}.txt".format(x), "w")
+            file.write("LT2R{0}".format(x))
+            file.close()
+
         file = open(self.score_folder + "/Right_thrower_1_total.txt", "w")
         file.write("RT1T")
         file.close()
@@ -212,28 +192,20 @@ class MainApplication:
         file.write("")
         file.close()
 
-        if self.game_type.get() == 0:
-            for x in range(1, 5):
-                file = open(self.score_folder + "/{0}_thrower_1_round_{1}.txt".format(side,x), "w")
-                file.write("")
-                file.close()
-                file = open(self.score_folder + "/{0}_thrower_2_round_{1}.txt".format(side,x), "w")
-                file.write("")
-                file.close()
-        else:
-            for x in range(1, 8):
-                file = open(self.score_folder + "/{0}_thrower_1_round_{1}.txt".format(side, x), "w")
-                file.write("")
-                file.close()
-                file = open(self.score_folder + "/{0}_thrower_2_round_{1}.txt".format(side, x), "w")
-                file.write("")
-                file.close()
-            file = open(self.score_folder + "/{0}_thrower_1_total.txt".format(side), "w")
+        for x in range(1, 8):
+            file = open(self.score_folder + "/{0}_thrower_1_round_{1}.txt".format(side, x), "w")
             file.write("")
             file.close()
-            file = open(self.score_folder + "/{0}_thrower_2_total.txt".format(side), "w")
+            file = open(self.score_folder + "/{0}_thrower_2_round_{1}.txt".format(side, x), "w")
             file.write("")
             file.close()
+
+        file = open(self.score_folder + "/{0}_thrower_1_total.txt".format(side), "w")
+        file.write("")
+        file.close()
+        file = open(self.score_folder + "/{0}_thrower_2_total.txt".format(side), "w")
+        file.write("")
+        file.close()
 
     def do_everything(self):
 
@@ -244,14 +216,15 @@ class MainApplication:
         player_info = soup_level1.find_all('div', class_="sc-iIHjhz fHaVQw")
 
         inprogress = []
+
         for x in range(0, len(player_info)):
             if "In Progress" in player_info[x].text:
                 inprogress.append(x)
+
         if self.first_instance:
             for i in inprogress:
                 self.former_strings[i] = player_info[i]
             self.first_instance = False
-
 
         for i in inprogress:
             if player_info[i] == self.former_strings[i]:
