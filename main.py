@@ -213,7 +213,7 @@ class MainApplication:
             self.master.destroy()
 
         soup_level1 = BeautifulSoup(self.driver.page_source, 'lxml')
-        player_info = soup_level1.find_all('div', class_="sc-iIHjhz fHaVQw")
+        player_info = soup_level1.find_all('div', class_="sc-dvpmds IHnEI")
 
         inprogress = []
 
@@ -221,19 +221,12 @@ class MainApplication:
             if "In Progress" in player_info[x].text:
                 inprogress.append(x)
 
-        if self.first_instance:
-            for i in inprogress:
-                self.former_strings[i] = player_info[i]
-            self.first_instance = False
 
         for i in inprogress:
-            if player_info[i] == self.former_strings[i]:
-                continue
-            side = player_info[i].find_all('div', class_="sc-dKEPtC gLlkqy")[0].text
-
+            side = player_info[i].find_all('div', class_="sc-jHXLhC cbPFDi")[0].text
             # Get player names
             names = []
-            for x in player_info[i].find_all('div', class_="sc-bOCYYb jKlLxi"):
+            for x in player_info[i].find_all('div', class_="sc-eqPNPO bfKGOc"):
                 names.append(x.text)
 
             # Name the key for each lane to be the two players names concat
@@ -264,7 +257,7 @@ class MainApplication:
             # Get all the scores for the game including the total
             # We skip the first two because they will be empty spaces
             scores = []
-            for x in player_info[i].find_all('div', class_="sc-ileJJU GFeXz"):
+            for x in player_info[i].find_all('div', class_="sc-dPPMrM iDRoCY"):
                 if x.text != '\xa0':
                     scores.append(x.text)
 
