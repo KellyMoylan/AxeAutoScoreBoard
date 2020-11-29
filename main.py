@@ -103,13 +103,13 @@ class MainApplication:
                 if self.headless.get() == 1:
                     ch_options.add_argument("--headless")
                 try:
-                    self.driver = webdriver.Chrome("chrome78/chromedriver.exe", options=ch_options)
+                    self.driver = webdriver.Chrome("chrome1/chromedriver.exe", options=ch_options)
                 except:
                     try:
-                        self.driver = webdriver.Chrome("chrome79/chromedriver.exe", options=ch_options)
+                        self.driver = webdriver.Chrome("chrome2/chromedriver.exe", options=ch_options)
                     except:
                         try:
-                            self.driver = webdriver.Chrome("chrome80/chromedriver.exe", options=ch_options)
+                            self.driver = webdriver.Chrome("chrome3/chromedriver.exe", options=ch_options)
                         except:
                             print("NO WORKING CHROME DRIVER")
                             exit()
@@ -118,13 +118,13 @@ class MainApplication:
                 if self.headless.get() == 1:
                     ff_options.add_argument("--headless")
                 try:
-                    self.driver = webdriver.Firefox("firefox24/geckodriver.exe", options=ff_options)
+                    self.driver = webdriver.Firefox("firefox1/geckodriver.exe", options=ff_options)
                 except:
                     try:
-                        self.driver = webdriver.Firefox("firefox25/geckodriver.exe", options=ff_options)
+                        self.driver = webdriver.Firefox("firefox2/geckodriver.exe", options=ff_options)
                     except:
                         try:
-                            self.driver = webdriver.Firefox("firefox26/geckodriver.exe", options=ff_options)
+                            self.driver = webdriver.Firefox("firefox3/geckodriver.exe", options=ff_options)
                         except:
                             print("NO WORKING FIREFOX DRIVER")
                             exit()
@@ -213,7 +213,7 @@ class MainApplication:
             self.master.destroy()
 
         soup_level1 = BeautifulSoup(self.driver.page_source, 'lxml')
-        player_info = soup_level1.find_all('div', class_="sc-dvpmds IHnEI")
+        player_info = soup_level1.find_all('div', class_="sc-dwztqd dcGySm")
 
         inprogress = []
 
@@ -223,10 +223,10 @@ class MainApplication:
 
 
         for i in inprogress:
-            side = player_info[i].find_all('div', class_="sc-jHXLhC cbPFDi")[0].text
+            side = player_info[i].find_all('div', class_="sc-bOCYYb bypKuP")[0].text
             # Get player names
             names = []
-            for x in player_info[i].find_all('div', class_="sc-eqPNPO bfKGOc"):
+            for x in player_info[i].find_all('div', class_="sc-ileJJU eAvugF"):
                 names.append(x.text)
 
             # Name the key for each lane to be the two players names concat
@@ -257,7 +257,7 @@ class MainApplication:
             # Get all the scores for the game including the total
             # We skip the first two because they will be empty spaces
             scores = []
-            for x in player_info[i].find_all('div', class_="sc-dPPMrM iDRoCY"):
+            for x in player_info[i].find_all('div', class_="sc-jWxkHr imtqgi"):
                 if x.text != '\xa0':
                     scores.append(x.text)
 
